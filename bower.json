@@ -1,0 +1,23 @@
+{
+  "name": "new_application",
+  "version": "0.0.1",
+  "authors": [],
+  "dependencies": {
+    "sass-mediaqueries": "*"
+  },
+  "keywords": [
+    "the",
+    "best",
+    "ever",
+    "app"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
