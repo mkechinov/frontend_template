@@ -102,21 +102,6 @@ after_bundle do
   run 'curl -o .gitignore https://raw.githubusercontent.com/mkechinov/frontend_template/master/.gitignore'
 
   inside 'config' do
-    # Add bower task to capistrano
-    run "echo \"\nnamespace :deploy do
-  desc 'install assets dependencies with bower'
-  task :prepare_assets_dependencies do
-    on roles(:web) do
-      within release_path do
-        with rails_env: fetch(:rails_env) do
-          execute :bower, :install
-        end
-      end
-    end
-  end
-  before 'deploy:updated', 'deploy:prepare_assets_dependencies'
-end\" >> deploy.rb"
-
     say 'Replacing database.yml with its example..'
     run 'curl -o database.yml.example https://raw.githubusercontent.com/mkechinov/frontend_template/master/template/database.yml.example'
     run 'cp database.yml.example database.yml'
@@ -160,13 +145,27 @@ end\" >> deploy.rb"
     generate "active_admin:install #{activeadmin_model_name.camelize}"
   end
 
-  # Setup Capistrano
-  run 'bundle exec cap install'
-
   # Setup bower
   run 'curl -o bower.json https://raw.githubusercontent.com/mkechinov/frontend_template/master/template/bower.json'
   run "echo '{\n  \"directory\": \"vendor/assets/components\"\n}' > .bowerrc"
   run 'bower install'
+
+  # Setup Capistrano
+  run 'bundle exec cap install'
+  # Add bower task to capistrano
+  run "echo \"\nnamespace :deploy do
+  desc 'install assets dependencies with bower'
+  task :prepare_assets_dependencies do
+    on roles(:web) do
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          execute :bower, :install
+        end
+      end
+    end
+  end
+  before 'deploy:updated', 'deploy:prepare_assets_dependencies'
+end\" >> config/deploy.rb"
 
   # Setup Git
   # Use git flow for (develop -> staging) and (master -> production) deploys
